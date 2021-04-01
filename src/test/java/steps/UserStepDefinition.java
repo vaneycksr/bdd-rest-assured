@@ -2,9 +2,7 @@ package steps;
 
 import io.cucumber.java.pt.Entao;
 import io.cucumber.java.pt.Quando;
-import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +23,10 @@ public class UserStepDefinition {
         expectedUser = user;
 
         given().
-                contentType(ContentType.JSON).
                 body(user).
         when().
-                post("http://localhost:12345/api" + endpoint).
+                post(endpoint).
         then().
-                contentType(ContentType.JSON).
                 statusCode(HttpStatus.SC_OK);
     }
 
@@ -38,17 +34,11 @@ public class UserStepDefinition {
     public void quando_faço_um_get_para_v3_user_eu_o_usuário_criado_é_retornado(String endpoint) {
 
         when().
-                get("http://localhost:12345/api" + endpoint).
+                get(endpoint).
         then().
-                contentType(ContentType.JSON).
                 statusCode(HttpStatus.SC_OK).
                 body("username", is(expectedUser.get("username")));
     }
-
-
-
-
-
 
 
 
