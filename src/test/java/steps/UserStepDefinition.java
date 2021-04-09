@@ -3,6 +3,8 @@ package steps;
 import io.cucumber.java.pt.Entao;
 import io.cucumber.java.pt.Quando;
 import org.apache.http.HttpStatus;
+import support.domain.User;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +14,13 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class UserStepDefinition {
 
+    private static final String CREAT_USER_ENDPOINT = "/v3/user";
+    private static final String USER_ENDPOINT = "/v3/user/{name}";
+
     // necessário criar para compartilhar os dados do json com toda a classe
     private Map<String, String> expectedUser = new HashMap<>();
+
+    private User user;
 
     @Quando("eu faço um POST para {word} com os seguintes valores:")               // mapeia os campos do json usando o Map
     public void eu_faço_um_post_para_v3_user_com_os_seguintes_valores(String endpoint, Map<String,String> user) {
@@ -44,13 +51,27 @@ public class UserStepDefinition {
 
     @Quando("crio um usuário")
     public void crio_um_usuário() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+        // cria um usuario
+        user = User.builder().build();
+
+        given().
+                body(user).
+        when().
+                post(CREAT_USER_ENDPOINT).
+        then().
+                statusCode(HttpStatus.SC_OK);
     }
 
     @Entao("o usuário é salvo no sistema")
     public void o_usuário_é_salvo_no_sistema() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+        given().
+                pathParam("name", user.getUsername()).
+        when().
+                get(USER_ENDPOINT).
+        then().
+                statusCode(HttpStatus.SC_OK).
+                body("username", is(user.getUsername()));
     }
 }
